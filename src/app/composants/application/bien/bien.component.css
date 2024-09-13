@@ -1,0 +1,9 @@
+/* styles.css ou styles.scss */
+
+.custom-header .ui-accordion-header {
+    background-color: #3498db;
+    color: #fff;
+    font-size: 16px;
+    /* Autres styles personnalisés */
+  }
+  

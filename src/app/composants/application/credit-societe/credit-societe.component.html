@@ -1,0 +1,839 @@
+<p-toast [style]="{ marginTop: '80px' }"></p-toast>
+<br />
+<div class="card">
+  <p-accordion class="w-full">
+    <p-accordionTab>
+      <ng-template pTemplate="header">
+        <div class="flex align-items-center">
+          <b
+            class="vertical-align-middle"
+            style="font-size: 1.2rem; color: blue"
+          >
+            TABLEAU DE BORD DES MOUVEMENTS DES INTRANTS | PREPOSER UN FILTRAGE
+          </b>
+        </div>
+      </ng-template>
+
+      <ng-template pTemplate="content">
+        <p-toolbar styleClass="mb-4 gap-2">
+          <ng-template pTemplate="left">
+            @if(loginService.UserConnexion.user.role.name === 'Agence'){
+            <button
+              pButton
+              pRipple
+              label="New"
+              icon="pi pi-external-link"
+              class="p-button-success mr-2"
+            ></button>
+            }
+
+            <button
+              pButton
+              pRipple
+              label="Export"
+              icon="pi pi-upload"
+              class="p-button-help"
+            ></button>
+          </ng-template>
+          <ng-template pTemplate="center">
+            <label style="font-size: 1.2rem; margin-right: 10px"
+            >FILTER BY AGENCE</label
+          >
+            <span class="p-input-icon-right ml-auto">
+              <i class="pi pi-search"></i>
+              <input
+                type="text"
+                pInputText
+                placeholder="Search"
+                [(ngModel)]="filterTextAgence"
+                (input)="applyFilter()"
+              />
+            </span>
+          </ng-template>
+
+          <ng-template pTemplate="right">
+            <label style="font-size: 1.2rem; margin-right: 10px"
+              >CAMPAGNE AGRICOLE</label
+            >
+
+            <div class="card flex justify-content">
+              <p-multiSelect
+                [options]="annees"
+                [(ngModel)]="selectedAnnees"
+                [filter]="true"
+                [style]="{ width: '150px' }"
+                optionLabel="name"
+                placeholder="CHOISIR: ANNEE"
+                (onChange)="onMultiAnneesChange($event)"
+              />
+            </div>
+
+            <div class="card flex justify-content">
+              <p-multiSelect
+                [options]="saisons"
+                [(ngModel)]="selectedSaisons"
+                [filter]="false"
+                [style]="{ width: '150px' }"
+                optionLabel="name"
+                placeholder="CHOISIR: SAISON"
+                (onChange)="onMultiSaisonsChange($event)"
+              />
+            </div>
+          </ng-template>
+        </p-toolbar>
+      </ng-template>
+    </p-accordionTab>
+  </p-accordion>
+</div>
+
+<p-dialog
+  header="Header"
+  [(visible)]="display"
+  [style]="{ width: '30vw' }"
+  (onHide)="onDialogHide()"
+>
+  <ng-template pTemplate="header">
+    <span class="p-inputgroup-addon">
+      <i class="pi pi-file-edit" style="font-size: 2.5rem; color: green"></i>
+    </span>
+    <span class="text-xl font-bold">{{ this.titleDialogCredit }}</span>
+  </ng-template>
+  <ng-template pTemplate="body">
+    <br />
+    <div>
+      <form [formGroup]="creditForm" (ngSubmit)="onSaveCredit()">
+        <p-steps
+          [model]="dialogPages"
+          [(activeIndex)]="dialogPageIndex"
+          [readonly]="false"
+        >
+        </p-steps>
+        <hr class="horizontal-line" />
+        <br />
+        @switch (dialogPageIndex) { @case (PageNames.DebutPage) {
+        <div>
+          <div class="p-inputgroup">
+            <span style="width: 25%">
+              <i style="font-size: 1.5rem; color: blue; font-style: normal"
+                >Date*</i
+              >
+            </span>
+            <p-calendar
+              dateFormat="dd/mm/yy"
+              placeholder="Date de crédit"
+              id="dateCredit"
+              formControlName="dateCredit"
+            ></p-calendar>
+          </div>
+          <br />
+          <div class="card flex justify-content-left">
+            <span style="width: 25%">
+              <i style="font-size: 1.5rem; color: blue; font-style: normal"
+                >OP*</i
+              >
+            </span>
+            <p-autoComplete
+              [suggestions]="filteredOps!"
+              (onSelect)="onSelectOp($event)"
+              (completeMethod)="filterOp($event)"
+              field="name"
+              pTooltip="Selectionner OP"
+              tooltipPosition="top"
+              id="opCredit"
+              formControlName="opCredit"
+            ></p-autoComplete>
+          </div>
+          <br />
+          <div class="p-inputgroup">
+            <span style="width: 25%">
+              <i style="font-size: 1.5rem; color: blue; font-style: normal"
+                >Capital*</i
+              >
+            </span>
+            <p-inputNumber
+              inputId="capital"
+              pTooltip="Entrer Capital"
+              tooltipPosition="top"
+              placeholder="Top"
+              [minFractionDigits]="1"
+              placeholder="Capital...."
+              id="capitalCredit"
+              formControlName="capitalCredit"
+            >
+            </p-inputNumber>
+          </div>
+          <br />
+          <div class="p-inputgroup">
+            <span style="width: 25%">
+              <i style="font-size: 1.5rem; color: blue; font-style: normal"
+                >Intêret</i
+              >
+            </span>
+            <p-inputNumber
+              inputId="interet"
+              pTooltip="Entrer Interet"
+              tooltipPosition="top"
+              placeholder="Top"
+              [minFractionDigits]="1"
+              placeholder="Intêret..."
+              id="interetCredit"
+              formControlName="interetCredit"
+            >
+            </p-inputNumber>
+          </div>
+          <br />
+          <div class="p-inputgroup">
+            <span style="width: 25%">
+              <i style="font-size: 1.5rem; color: blue; font-style: normal"
+                >Différé</i
+              >
+            </span>
+            <p-inputNumber
+              inputId="moratoire"
+              pTooltip="Entrer Moratoire"
+              tooltipPosition="top"
+              placeholder="Top"
+              [minFractionDigits]="1"
+              placeholder="Moratoire"
+              id="moratoireCredit"
+              formControlName="moratoireCredit"
+            >
+            </p-inputNumber>
+          </div>
+          <br />
+          <div class="p-inputgroup">
+            <span style="width: 25%">
+              <i style="font-size: 1.5rem; color: blue; font-style: normal"
+                >Autres...</i
+              >
+            </span>
+            <p-inputNumber
+              inputId="autres_engagements"
+              pTooltip="Entrer Autres..."
+              tooltipPosition="top"
+              placeholder="Top"
+              [minFractionDigits]="1"
+              placeholder="Autres..."
+              id="autresCredit"
+              formControlName="autresCredit"
+            >
+            </p-inputNumber>
+          </div>
+          <br />
+          <br />
+
+          <p-footer>
+            <p-toolbar>
+              <div class="p-toolbar-group-start">
+                <p-button
+                  icon="pi pi-check"
+                  (click)="display = false"
+                  label="Close"
+                  styleClass="p-button-text"
+                ></p-button>
+              </div>
+              <div class="p-toolbar-group-end">
+                <p-button
+                  icon="pi pi-arrow-right"
+                  (click)="allerSuivant()"
+                  label="Suivant"
+                  styleClass="p-button-text"
+                ></p-button>
+              </div>
+            </p-toolbar>
+          </p-footer>
+        </div>
+        } @case (PageNames.FinPage) {
+        <div>
+          <div class="p-inputgroup">
+            <span style="width: 25%">
+              <i style="font-size: 1.5rem; color: blue; font-style: normal"
+                >Date*</i
+              >
+            </span>
+            <p-calendar
+              dateFormat="dd/mm/yy"
+              inputId="buttonbar"
+              placeholder="Date"
+              id="dateExploitation"
+              formControlName="dateExploitation"
+            ></p-calendar>
+          </div>
+          <br />
+          <div class="p-inputgroup">
+            <span style="width: 25%">
+              <i style="font-size: 1.5rem; color: blue; font-style: normal"
+                >Compte</i
+              >
+            </span>
+            <span>
+              @if(this.isCompteCreated == true) {
+              <i style="font-size: 1.5rem; color: black; font-style: normal">
+                {{ this.creditForm.controls["compteExploitation"].value }}</i
+              >
+              } @else if (this.isCompteCreated == false) {
+              <i style="font-size: 1.5rem"> - - - - -</i>
+              }
+            </span>
+          </div>
+          <br />
+
+          <div class="p-inputgroup">
+            <span style="width: 25%">
+              <i style="font-size: 1.5rem; color: blue; font-style: normal"
+                >Année</i
+              >
+            </span>
+            <span>
+              <i style="font-size: 1.5rem; color: black; font-style: normal">
+                {{ this.loginService.selectedCampagne.annee.valeur }}</i
+              >
+            </span>
+          </div>
+          <br />
+          <div class="p-inputgroup">
+            <span style="width: 25%">
+              <i style="font-size: 1.5rem; color: blue; font-style: normal"
+                >Saison</i
+              >
+            </span>
+            <span>
+              <i style="font-size: 1.5rem; color: black; font-style: normal"
+                >{{ this.loginService.selectedCampagne.saison.description }}
+              </i>
+            </span>
+          </div>
+          <br />
+
+          <div class="p-inputgroup">
+            <span style="width: 25%">
+              <i style="font-size: 1.5rem; color: blue; font-style: normal"
+                >Variété</i
+              >
+            </span>
+            <p-dropdown
+              id="varieteCredit"
+              formControlName="varieteCredit"
+              [options]="selectItemGroupVarietes"
+              [style]="{ width: '200px' }"
+              placeholder="CHOISIR VARIETE"
+              [group]="true"
+            >
+              <ng-template let-group pTemplate="group">
+                <div class="flex align-items-center">
+                  <span>{{ group.label }}</span>
+                </div>
+              </ng-template>
+            </p-dropdown>
+          </div>
+          <br />
+          <div class="p-inputgroup">
+            <span style="width: 25%">
+              <i style="font-size: 1.5rem; color: blue; font-style: normal"
+                >Surface</i
+              >
+            </span>
+            <p-inputNumber
+              inputId="surface"
+              pTooltip="Entrer Surface"
+              tooltipPosition="top"
+              placeholder="Top"
+              [minFractionDigits]="1"
+              placeholder="Superficie."
+              id="surfaceCredit"
+              formControlName="surfaceCredit"
+            >
+            </p-inputNumber>
+          </div>
+          <br />
+
+          <br />
+
+          <p-footer>
+            <p-toolbar>
+              <div class="p-toolbar-group-start">
+                <p-button
+                  icon="pi pi-arrow-left"
+                  (click)="allerAvant()"
+                  label="Retour"
+                  styleClass="p-button-text"
+                ></p-button>
+              </div>
+              <div class="p-toolbar-group-end">
+                <p-confirmDialog [style]="{ width: '20vw' }"></p-confirmDialog>
+                <p-button
+                  icon="pi pi-check"
+                  (click)="onSaveCredit()"
+                  [disabled]="!estFormulaireValide()"
+                  [label]="labelSave"
+                  [styleClass]="classSave"
+                ></p-button>
+                <p-messages [value]="msgs"></p-messages>
+              </div>
+            </p-toolbar>
+          </p-footer>
+        </div>
+        } }
+      </form>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="footer"> </ng-template>
+</p-dialog>
+<br />
+
+@defer (when loading) {
+<div class="card flex justify-content-center">
+  <p-accordion class="w-full">
+    @for (itemAgence of filteredAgences; track $index) {
+    <p-accordionTab>
+      <ng-template pTemplate="header">
+        <div class="flex align-items-center">
+          <i
+            class="pi pi-folder-open mr-2"
+            style="font-size: 2rem; color: orange"
+          ></i>
+          <span
+            class="vertical-align-middle"
+            style="font-size: 1.3rem; color: blue"
+            >{{ itemAgence.id }} -
+            {{ itemAgence.name }}
+            | Exigible:
+            {{ creditSumGroupsAgence[itemAgence.id].sumExigibles }}
+          </span>
+          <span
+            class="vertical-align-middle"
+            style="font-size: 1.3rem; color: green"
+          >
+            | Capital:
+            {{ creditSumGroupsAgence[itemAgence.id].sumCapitals }}
+            | Moratoire:
+            {{ creditSumGroupsAgence[itemAgence.id].sumMoratoires }}
+            | Intéret:
+            {{ creditSumGroupsAgence[itemAgence.id].sumInterets }}
+            | Autres:
+            {{ creditSumGroupsAgence[itemAgence.id].sumAutresEngagements }}
+            | Rembs. :
+            {{
+              formatMontant(
+                this.getTotalRemboursementsMouvementAgence(
+                  creditGroupsAgence[itemAgence.id]
+                )
+              )
+            }}
+
+            | @if ( this.getTauxRemboursementsMouvementAgence(
+            creditGroupsAgence[ itemAgence.id ] ) >= 100) {
+            <span
+              [style]="{
+                'text-align': 'right',
+                'font-size': '1.3rem',
+                'background-color': '#A9F5A9'
+              }"
+            >
+              Taux :
+
+              {{
+                this.getTauxRemboursementsMouvementAgence(
+                  creditGroupsAgence[itemAgence.id]
+                ).toFixed(2) + " % "
+              }}
+            </span>
+            } @else if ( this.getTauxRemboursementsMouvementAgence(
+            creditGroupsAgence[ itemAgence.id ] ) < 100 &&
+            this.getTauxRemboursementsMouvementAgence( creditGroupsAgence[
+            itemAgence.id ] ) >= 75) {
+            <span
+              [style]="{
+                'text-align': 'right',
+                'font-size': '1.3rem',
+                'background-color': '#EFFBF5'
+              }"
+            >
+              Taux :
+
+              {{
+                this.getTauxRemboursementsMouvementAgence(
+                  creditGroupsAgence[itemAgence.id]
+                ).toFixed(2) + " % "
+              }}
+            </span>
+            } @else if (this.getTauxRemboursementsMouvementAgence(
+            creditGroupsAgence[ itemAgence.id ] ) < 75 &&
+            this.getTauxRemboursementsMouvementAgence( creditGroupsAgence[
+            itemAgence.id ] ) >= 50) {
+            <span
+              [style]="{
+                'text-align': 'right',
+                'font-size': '1.3rem',
+                'background-color': '#EFFBF5'
+              }"
+            >
+              Taux :
+
+              {{
+                this.getTauxRemboursementsMouvementAgence(
+                  creditGroupsAgence[itemAgence.id]
+                ).toFixed(2) + " % "
+              }}
+            </span>
+            } @else if ( this.getTauxRemboursementsMouvementAgence(
+            creditGroupsAgence[ itemAgence.id ] )< 50 &&
+            this.getTauxRemboursementsMouvementAgence( creditGroupsAgence[
+            itemAgence.id ] ) >= 25) {
+            <span
+              [style]="{
+                'text-align': 'right',
+                'font-size': '1.3rem',
+                'background-color': '#F5DA81'
+              }"
+            >
+              Taux :
+
+              {{
+                this.getTauxRemboursementsMouvementAgence(
+                  creditGroupsAgence[itemAgence.id]
+                ).toFixed(2) + " % "
+              }}
+            </span>
+            } @else if ( this.getTauxRemboursementsMouvementAgence(
+            creditGroupsAgence[ itemAgence.id ] )< 25 &&
+            this.getTauxRemboursementsMouvementAgence( creditGroupsAgence[
+            itemAgence.id ] ) >= 0) { @if ( parseIntValue(creditSumGroupsAgence[
+            itemAgence.id ].sumExigibles.toString()) > 0) {
+            <span
+              [style]="{
+                'text-align': 'right',
+                'font-size': '1.3rem',
+                'background-color': '#FA8258'
+              }"
+            >
+              Taux :
+
+              {{
+                this.getTauxRemboursementsMouvementAgence(
+                  creditGroupsAgence[itemAgence.id]
+                ).toFixed(2) + " % "
+              }} </span
+            >}@else {
+
+            <span
+              [style]="{
+              'text-align': 'right',
+              'font-size': '1.3rem',
+
+            }"
+            >
+              Taux :
+
+              {{
+                this.getTauxRemboursementsMouvementAgence(
+                  creditGroupsAgence[itemAgence.id]
+                ).toFixed(2) + " % "
+              }}
+            </span>
+            } }|
+          </span>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="content">
+        <p-accordion class="w-full">
+          @for (itemPoint of fillerPointByAgence(itemAgence.id); track $index) {
+          <p-accordionTab>
+            <ng-template pTemplate="header">
+              <div class="flex align-items-center">
+                <i
+                  class="pi pi-folder-open mr-2"
+                  style="font-size: 2rem; color: orange"
+                ></i>
+                <span
+                  class="vertical-align-middle"
+                  style="font-size: 1.3rem; color: blue"
+                  >{{ itemPoint.point.id }} -
+                  {{ itemPoint.point.name }}
+                  | Exigible:
+                  {{ creditSumGroupsPoint[itemPoint.point.id].sumExigibles }}
+                </span>
+                <span
+                  class="vertical-align-middle"
+                  style="font-size: 1.3rem; color: green"
+                >
+                  | Capital:
+                  {{ creditSumGroupsPoint[itemPoint.point.id].sumCapitals }}
+                  | Moratoire:
+                  {{ creditSumGroupsPoint[itemPoint.point.id].sumMoratoires }}
+                  | Intéret:
+                  {{ creditSumGroupsPoint[itemPoint.point.id].sumInterets }}
+                  | Autres:
+                  {{
+                    creditSumGroupsPoint[itemPoint.point.id]
+                      .sumAutresEngagements
+                  }}
+                  |
+                </span>
+              </div>
+            </ng-template>
+
+            <ng-template pTemplate="content">
+              <div id="mapElement" #mapElement></div>
+
+              @if (creditGroups[itemPoint.point.id].length > 0){
+              <div class="card">
+                <p-table
+                  #myTabClients
+                  [filters]="tableCreditsFilters"
+                  [columns]="colsCreditCustom"
+                  [value]="creditGroups[itemPoint.point.id]"
+                  [tableStyle]="{ 'min-width': '50rem' }"
+                  styleClass="p-datatable-sm"
+                  [loading]="loading"
+                  dataKey="id"
+                  sortMode="single"
+                  rowExpandMode="single"
+                  [rows]="5"
+                  [paginator]="true"
+                  [rowHover]="true"
+                  [showCurrentPageReport]="true"
+                  [rowsPerPageOptions]="[5, 10, 25, 50]"
+                  [scrollable]="true"
+                  scrollHeight="600px"
+                  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                >
+                  <ng-template pTemplate="caption">
+                    <div class="flex">
+                      <p-button
+                        label="Clear"
+                        class="p-button-outlined"
+                        icon="pi pi-filter-slash"
+                      ></p-button>
+                      <span class="p-input-icon-left ml-auto">
+                        <i class="pi pi-search"></i>
+
+                        <input
+                          pInputText
+                          type="text"
+                          (input)="
+                            myTabClients.filterGlobal(
+                              $any($event.target).value,
+                              'contains'
+                            )
+                          "
+                          placeholder="Search"
+                        />
+                      </span>
+                    </div>
+                  </ng-template>
+                  <br />
+                  <ng-template pTemplate="header" let-columns>
+                    <tr>
+                      <th style="width: 3rem; background-color: aqua">
+                        <i class="pi pi-eye-slash"></i>
+                      </th>
+                      @for (col of columns; track $index) {
+                      <th
+                        [pSortableColumn]="col.field"
+                        style="background-color: aqua"
+                      >
+                        @if (col.filter) {
+                        <p-columnFilter
+                          type="text"
+                          [field]="col.field"
+                          display="menu"
+                          class="ml-auto"
+                        ></p-columnFilter>
+                        }
+                        {{ col.header }}
+                        @if (col.sort) {
+                        <p-sortIcon [field]="col.field"></p-sortIcon>
+                        }
+                      </th>
+                      } @empty { Empty list of credits }
+                      <th
+                        colspan="2"
+                        style="
+                          text-align: center;
+                          vertical-align: middle;
+                          background-color: aqua;
+                        "
+                      >
+                        ACTIONS
+                      </th>
+                    </tr></ng-template
+                  >
+
+                  <ng-template
+                    pTemplate="body"
+                    let-rowData
+                    let-columns="columns"
+                    let-expanded="expanded"
+                  >
+                    <tr>
+                      <td>
+                        <p-button
+                          pRipple
+                          [pRowToggler]="rowData"
+                          class="p-button-text p-button-rounded p-button-plain"
+                          [icon]="
+                            expanded
+                              ? 'pi pi-chevron-down'
+                              : 'pi pi-chevron-right'
+                          "
+                          (click)="showDialogExploitation(rowData)"
+                        ></p-button>
+                      </td>
+                      @for (col of columns; track $index) { @switch (true) {
+                      @default { @if ( col.field ==
+                      'tauxRemboursementMouvement') { @if ( rowData[col.field]
+                      >= 100) {
+                      <td
+                        [style]="{
+                          'text-align': 'right',
+                          'background-color': '#A9F5A9'
+                        }"
+                      >
+                        <span>{{ rowData[col.field].toFixed(2) + " %" }}</span>
+                      </td>
+                      } @else if ( rowData[col.field] < 100 &&
+                      rowData[col.field] >= 75) {
+                      <td
+                        [style]="{
+                          'text-align': 'right',
+                          'background-color': '#D8F781'
+                        }"
+                      >
+                        <span>{{ rowData[col.field].toFixed(2) + " %" }}</span>
+                      </td>
+                      } @else if ( rowData[col.field] < 75 && rowData[col.field]
+                      >= 50) {
+                      <td
+                        [style]="{
+                          'text-align': 'right',
+                          'background-color': '#EFFBF5'
+                        }"
+                      >
+                        <span>{{ rowData[col.field].toFixed(2) + " %" }}</span>
+                      </td>
+                      } @else if ( rowData[col.field] < 50 && rowData[col.field]
+                      >= 25) {
+                      <td
+                        [style]="{
+                          'text-align': 'right',
+                          'background-color': '#F5DA81'
+                        }"
+                      >
+                        <span>{{ rowData[col.field].toFixed(2) + " %" }}</span>
+                      </td>
+                      } @else if ( rowData[col.field] < 25 && rowData[col.field]
+                      >= 0) {
+                      <td
+                        [style]="{
+                          'text-align': 'right',
+                          'background-color': '#FA8258'
+                        }"
+                      >
+                        <span>{{ rowData[col.field].toFixed(2) + " %" }}</span>
+                      </td>
+                      } } @else if ( col.field == 'remboursementsMouvementSum')
+                      {
+                      <td [style]="{ 'text-align': 'right' }">
+                        <span>{{
+                          this.formatMontant(rowData[col.field])
+                        }}</span>
+                      </td>
+                      } @else if ( col.field == 'exigible') {
+                      <td [style]="{ 'text-align': 'right' }">
+                        <span>{{
+                          this.formatMontant(rowData[col.field])
+                        }}</span>
+                      </td>
+                      } @else {
+                      <td>
+                        <span>{{ rowData[col.field] }}</span>
+                      </td>
+                      } } } }
+
+                      <td>
+                        <p-button
+                          pRipple
+                          icon="pi pi-eye "
+                          class="p-button-rounded p-button-info p-mr-2"
+                          (click)="showDialogCredit('update', rowData)"
+                        ></p-button>
+                      </td>
+                      <td>
+                        <p-button
+                          pRipple
+                          icon="pi pi-delete-left"
+                          class="p-button-rounded p-button-danger p-mr-2"
+                          (click)="showDialogCredit('delete', rowData)"
+                        ></p-button>
+                      </td>
+                    </tr>
+                  </ng-template>
+
+                  <ng-template pTemplate="summary">
+                    <p-toolbar>
+                      <div class="p-toolbar-group-start">
+                        <i class="pi pi-info-circle" style="font-size: 1.4rem">
+                          Au total :
+                          {{
+                            myTabClients.filteredValue
+                              ? myTabClients.filteredValue.length
+                              : myTabClients.value.length
+                          }}
+                          credit(s).
+                        </i>
+                      </div>
+                      <div class="p-toolbar-group-center">
+                        <i class="pi pi-info-circle" style="font-size: 1.4rem">
+                          Exigibles :
+                          {{
+                            formatMontant(this.getTotalExigibles(myTabClients))
+                          }}
+                        </i>
+                      </div>
+                      <div class="p-toolbar-group-end">
+                        <i class="pi pi-info-circle" style="font-size: 1.4rem">
+                          Remboursements :
+                          {{
+                            formatMontant(
+                              this.getTotalRemboursementsMouvement(myTabClients)
+                            )
+                          }}
+                          | Taux:
+                          {{
+                            this.getTauxRemboursementsMouvement(
+                              myTabClients
+                            ).toFixed(2) + " %"
+                          }}
+                          |
+                        </i>
+                      </div>
+                    </p-toolbar>
+                  </ng-template>
+                </p-table>
+              </div>
+              } @else { LA LISTE DES CREDITS EST VIDE POUR
+              {{ itemPoint.point.name }}
+
+              }
+            </ng-template>
+          </p-accordionTab>
+          }
+        </p-accordion>
+      </ng-template>
+    </p-accordionTab>
+    } @empty { LA LISTE DES POINTS DE COLLECTE EST VIDE }
+  </p-accordion>
+</div>
+} @placeholder {
+<span>Chargement...</span>
+} @error {
+<span>Error</span>
+} @loading (minimum 1s) {
+<div class="card">
+  <p-progressBar
+    mode="indeterminate"
+    [style]="{ height: '6px' }"
+  ></p-progressBar>
+</div>
+}

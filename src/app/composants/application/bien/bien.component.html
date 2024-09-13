@@ -1,0 +1,349 @@
+<p-toast>
+</p-toast>
+<div id="mapElement" #mapElement></div>
+<br>
+<div class="card">
+    <p-header >
+        <div *ngIf="isPersonne"  >
+            <p-toolbar styleClass="p-mb-4" >
+                <ng-template pTemplate="left">
+                    <label style="color: red; font-size: 14px;">CLIENT N°: {{this.client.code }}  </label>
+                </ng-template>
+           
+            </p-toolbar>
+        <p-toolbar styleClass="p-mb-4" >
+                <ng-template pTemplate="left">
+                    <i class="pi pi-user" style="font-size: 1.1rem"> </i> 
+                    <span style="margin-left: 8px;"><label style="color: blue; font-size: 14px;">{{this.client.firstName }} {{this.client.lastName }}  </label></span> 
+                </ng-template>
+                <ng-template pTemplate="right">
+                    <i class="pi pi-ellipsis-v" style="font-size: 1.1rem"> </i> 
+                <span style="margin-left: 8px;"><label style="color: blue; font-size: 14px;"> {{this.client.profession.name }}  </label> </span>
+                </ng-template>
+        
+        </p-toolbar>
+        <p-toolbar styleClass="p-mb-4" >
+            <ng-template pTemplate="left">
+                <i class="pi pi-cloud" style="font-size: 1.1rem"> </i> 
+                <span style="margin-left: 8px;"><label style="color: blue; font-size: 14px;"> {{this.client.email }}  </label> </span>
+            </ng-template>
+            <ng-template pTemplate="right">
+                <i class="pi pi-phone" style="font-size: 1.5rem"> </i> 
+                <span style="margin-left: 8px;"><label style="color: blue; font-size: 14px;">Tel: {{this.client.telephone }}  </label></span>
+            </ng-template>
+        </p-toolbar>
+        <p-toolbar styleClass="p-mb-4" >
+            <ng-template pTemplate="right">
+                <i class="pi pi-home" style="font-size: 1.1rem"> </i> 
+                    <span style="margin-left: 8px;"><label style="color: blue; font-size: 14px;">{{this.client.adresse }}  </label> </span>
+            </ng-template>
+        </p-toolbar>
+        </div>
+        <div *ngIf="isSociete" >
+            <p-toolbar styleClass="p-mb-4" >
+                <ng-template pTemplate="left">
+                    <label style="color: red; font-size: 14px;">CLIENT N°: {{this.client.code }}  </label>
+                </ng-template>
+           
+            </p-toolbar>
+        <p-toolbar styleClass="p-mb-4" >    
+            <ng-template pTemplate="left">
+                <i class="pi pi-building" style="font-size: 1.1rem"> </i> 
+                    <span style="margin-left: 8px;"><label style="color: blue; font-size: 14px;">{{this.client.societe }} | {{this.client.sigle }}  </label></span>
+            </ng-template>
+            <ng-template pTemplate="right">
+                <i class="pi pi-ellipsis-v" style="font-size: 1.1rem"> </i> 
+            <span style="margin-left: 8px;"><label style="color: blue; font-size: 14px;"> {{this.client.typeSociete.sigle }}  </label> </span>
+            </ng-template>
+        </p-toolbar>
+        <p-toolbar styleClass="p-mb-4" >
+            <ng-template pTemplate="left">
+                <i class="pi pi-cloud" style="font-size: 1.1rem"> </i> 
+                <span style="margin-left: 8px;"><label style="color: blue; font-size: 14px;"> {{this.client.email }}  </label> </span>
+            </ng-template>
+            <ng-template pTemplate="right">
+                <i class="pi pi-phone" style="font-size: 1.4rem"> </i> 
+                <span style="margin-left: 8px;"><label style="color: blue; font-size: 14px;">{{this.client.telephone }}  </label></span>
+            </ng-template>
+        </p-toolbar>
+        <p-toolbar styleClass="p-mb-4" >
+            <ng-template pTemplate="right">
+                <i class="pi pi-home" style="font-size: 1.1rem"> </i> 
+                    <span style="margin-left: 8px;"><label style="color: blue; font-size: 14px;">{{this.client.adresse }}  </label> </span>
+            </ng-template>
+        </p-toolbar>
+        </div>
+    </p-header>       
+        
+</div>
+<br>
+<div class="p-py-3">
+    <p-button [icon]="activeState[0] ? 'pi pi-minus' : 'pi pi-plus'" (click)="toggle(0)" styleClass="p-button-text p-ml-2" label="Automobile"></p-button>
+    <p-button [icon]="activeState[1] ? 'pi pi-minus' : 'pi pi-plus'" (click)="toggle(1)" styleClass="p-button-text p-ml-2" label="Résidence"></p-button>
+    <p-button [icon]="activeState[2] ? 'pi pi-minus' : 'pi pi-plus'" (click)="toggle(2)" styleClass="p-button-text p-ml-2" label="Commerce"></p-button>
+</div>
+<br>
+<p-accordion>
+   
+        <p-accordionTab styleClass="custom-header"  [selected]="activeState[0]" (onTabShow)="onTabShow(0)">
+            <ng-template pTemplate="header" >
+             
+                <div class="flex align-items-center" >
+                    <i class="pi pi-car mr-2"></i>
+                    <p-chip styleClass= {{chip_auto}} label="AUTOMOBILE"></p-chip>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="content">
+                <div class="card">
+                    <p-table  
+                    #myTabBiensAutomobile
+                    [columns]="colsAutomobileCustom"
+                    [value]="this.biensAutomobileCustom"
+                    dataKey="id"
+                    sortMode="single"
+                    rowExpandMode ="single"
+                    [rows]="5"
+                    [paginator]="true"
+                    [rowHover]="true"
+                    [showCurrentPageReport]="true"
+                    [rowsPerPageOptions]="[5, 10, 25, 50]"
+                    [scrollable]="true"
+                    scrollHeight="400px"
+                    
+                   
+                    
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
+                            <ng-template pTemplate="caption">
+                                <div class="flex">
+                                    <button pButton label="Clear" class="p-button-outlined" icon="pi pi-filter-slash"></button>
+                                    <span class="p-input-icon-left ml-auto">
+                                        <i class="pi pi-search"></i>
+                                        <input pInputText type="text"  placeholder="Search keyword" />
+                                    </span>
+                                </div>
+                            </ng-template>
+                            <br>
+                            <ng-template pTemplate="header" let-columns>
+                                <tr>   
+                                    <th style="width: 3rem">
+                                    <i class="pi pi-eye-slash"></i>
+                                </th>
+                                <th *ngFor="let col of columns" [pSortableColumn]="col.field">
+            
+                                    <p-columnFilter *ngIf="col.filter == true"   type="text" [field]="col.field" display="menu" class="ml-auto"></p-columnFilter>
+                                    {{col.header}}
+                                    <p-sortIcon *ngIf="col.sort == true" [field]="col.field"></p-sortIcon>
+                                    
+                                </th>
+                                    <th colspan="2">ACTIONS</th>
+                                </tr>
+                        
+                            </ng-template>
+                          
+                            <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+                                <tr>
+            
+                                    <td>
+                                        <button type="button" pButton pRipple [pRowToggler]="rowData" class="p-button-text p-button-rounded p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                                    </td>
+            
+                                    <td *ngFor="let col of columns" [ngSwitch]="true">
+                                       
+                                            <span *ngSwitchDefault>{{rowData[col.field]}}</span>
+                                    </td>
+                                    <td>
+                                        <button pButton pRipple icon="pi pi-eye " class="p-button-rounded p-button-info p-mr-2 " ></button>
+                                    </td>
+                                
+                                </tr>
+                            </ng-template>
+            
+                            <ng-template pTemplate="summary">
+                                <div class="p-d-flex p-ai-center p-jc-between">
+                                    Au total : {{myTabBiensAutomobile.filteredValue ? myTabBiensAutomobile.filteredValue.length : 0 }} Automobile(s).
+                                </div>
+                            </ng-template>
+            
+                          
+                        </p-table>
+                </div>
+            </ng-template>
+        </p-accordionTab>
+  
+    <br>
+        <p-accordionTab [selected]="activeState[1]" (onTabShow)="onTabShow(1)">
+            
+            <ng-template pTemplate="header">
+                <div class="flex align-items-center">
+                    <i class="pi pi-home mr-2"></i>
+                    <p-chip styleClass= {{chip_residence}} label="RESIDENCE"></p-chip>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="content">
+                <div class="card">
+                    <p-table  
+                    #myTabBiensResidence
+                    [columns]="colsResidenceCustom"
+                    [value]="this.biensResidenceCustom"
+                    dataKey="id"
+                    sortMode="single"
+                    rowExpandMode ="single"
+                    [rows]="5"
+                    [paginator]="true"
+                    [rowHover]="true"
+                    [showCurrentPageReport]="true"
+                    [rowsPerPageOptions]="[5, 10, 25, 50]"
+                    [scrollable]="true"
+                    scrollHeight="400px"
+                    
+                   
+                    
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
+                            <ng-template pTemplate="caption">
+                                <div class="flex">
+                                    <button pButton label="Clear" class="p-button-outlined" icon="pi pi-filter-slash"></button>
+                                    <span class="p-input-icon-left ml-auto">
+                                        <i class="pi pi-search"></i>
+                                        <input pInputText type="text"  placeholder="Search keyword" />
+                                    </span>
+                                </div>
+                            </ng-template>
+                            <br>
+                            <ng-template pTemplate="header" let-columns>
+                                <tr>   
+                                    <th style="width: 3rem">
+                                    <i class="pi pi-eye-slash"></i>
+                                </th>
+                                <th *ngFor="let col of columns" [pSortableColumn]="col.field">
+            
+                                    <p-columnFilter *ngIf="col.filter == true"   type="text" [field]="col.field" display="menu" class="ml-auto"></p-columnFilter>
+                                    {{col.header}}
+                                    <p-sortIcon *ngIf="col.sort == true" [field]="col.field"></p-sortIcon>
+                                    
+                                </th>
+                                    <th colspan="2">ACTIONS</th>
+                                </tr>
+                        
+                            </ng-template>
+                          
+                            <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+                                <tr>
+            
+                                    <td>
+                                        <button type="button" pButton pRipple [pRowToggler]="rowData" class="p-button-text p-button-rounded p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                                    </td>
+            
+                                    <td *ngFor="let col of columns" [ngSwitch]="true">
+                                       
+                                            <span *ngSwitchDefault>{{rowData[col.field]}}</span>
+                                    </td>
+                                    <td>
+                                        <button pButton pRipple icon="pi pi-eye " class="p-button-rounded p-button-info p-mr-2 " ></button>
+                                    </td>
+                                
+                                </tr>
+                            </ng-template>
+            
+                            <ng-template pTemplate="summary">
+                                <div class="p-d-flex p-ai-center p-jc-between">
+                                    Au total : {{myTabBiensResidence.filteredValue ? myTabBiensResidence.filteredValue.length : 0 }} Automobile(s).
+                                </div>
+                            </ng-template>
+            
+                          
+                        </p-table>
+                </div>
+            </ng-template>
+            
+            
+          
+        </p-accordionTab>
+    <br>
+        <p-accordionTab [selected]="activeState[2]" (onTabShow)="onTabShow(2)">
+            
+            <ng-template pTemplate="header">
+                <div class="flex align-items-center">
+                    <i class="pi pi-shopping-cart mr-2"></i>
+                    <p-chip styleClass= {{chip_commercial}} label="COMMERCIAL"></p-chip>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="content">
+                <div class="card">
+                    <p-table  
+                    #myTabBiensCommercial
+                    [columns]="colsCommercialCustom"
+                    [value]="this.biensCommercialCustom"
+                    dataKey="id"
+                    sortMode="single"
+                    rowExpandMode ="single"
+                    [rows]="5"
+                    [paginator]="true"
+                    [rowHover]="true"
+                    [showCurrentPageReport]="true"
+                    [rowsPerPageOptions]="[5, 10, 25, 50]"
+                    [scrollable]="true"
+                    scrollHeight="400px"
+                    
+                   
+                    
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
+                            <ng-template pTemplate="caption">
+                                <div class="flex">
+                                    <button pButton label="Clear" class="p-button-outlined" icon="pi pi-filter-slash"></button>
+                                    <span class="p-input-icon-left ml-auto">
+                                        <i class="pi pi-search"></i>
+                                        <input pInputText type="text"  placeholder="Search keyword" />
+                                    </span>
+                                </div>
+                            </ng-template>
+                            <br>
+                            <ng-template pTemplate="header" let-columns>
+                                <tr>   
+                                    <th style="width: 3rem">
+                                    <i class="pi pi-eye-slash"></i>
+                                </th>
+                                <th *ngFor="let col of columns" [pSortableColumn]="col.field">
+            
+                                    <p-columnFilter *ngIf="col.filter == true"   type="text" [field]="col.field" display="menu" class="ml-auto"></p-columnFilter>
+                                    {{col.header}}
+                                    <p-sortIcon *ngIf="col.sort == true" [field]="col.field"></p-sortIcon>
+                                    
+                                </th>
+                                    <th colspan="2">ACTIONS</th>
+                                </tr>
+                        
+                            </ng-template>
+                          
+                            <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+                                <tr>
+            
+                                    <td>
+                                        <button type="button" pButton pRipple [pRowToggler]="rowData" class="p-button-text p-button-rounded p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                                    </td>
+            
+                                    <td *ngFor="let col of columns" [ngSwitch]="true">
+                                       
+                                            <span *ngSwitchDefault>{{rowData[col.field]}}</span>
+                                    </td>
+                                    <td>
+                                        <button pButton pRipple icon="pi pi-eye " class="p-button-rounded p-button-info p-mr-2 " ></button>
+                                    </td>
+                                
+                                </tr>
+                            </ng-template>
+            
+                            <ng-template pTemplate="summary">
+                                <div class="p-d-flex p-ai-center p-jc-between">
+                                    Au total : {{myTabBiensCommercial.filteredValue ? myTabBiensCommercial.filteredValue.length : 0 }} Automobile(s).
+                                </div>
+                            </ng-template>
+            
+                          
+                        </p-table>
+                </div>
+            </ng-template>
+            
+       
+    </p-accordionTab>
+</p-accordion>
+ 

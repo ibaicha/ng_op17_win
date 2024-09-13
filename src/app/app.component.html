@@ -1,0 +1,34 @@
+<!-- Header
+================================================== -->
+
+<app-header></app-header>
+
+<!-- Navigation
+================================================== -->
+
+<app-navbar></app-navbar>
+
+<!-- credit-campagne-titre
+================================================== -->
+@if(this.router.url == '/credit-campagne' || this.router.url == '/credit-campagne-etablissement') {
+<app-credit-campagne-titre></app-credit-campagne-titre>
+}
+
+<router-outlet> </router-outlet>
+
+<!-- Footer
+================================================== -->
+<app-footer></app-footer>
+
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker
+      .register("/service-worker.js")
+      .then((registration) => {
+        console.log("SW registered");
+      })
+      .catch((err) => {
+        console.log("SW error", err);
+      });
+  }
+</script>

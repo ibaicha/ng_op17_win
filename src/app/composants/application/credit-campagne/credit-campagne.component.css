@@ -1,0 +1,124 @@
+ .center {
+    text-align: center;
+  }
+
+  .left {
+    text-align: left;
+  }
+
+  .right {
+    text-align: right;
+  }
+
+/* styles.css or styles.scss */
+
+.custom-dropdown {
+  background-color: #f0f0f0;
+  border: 3px solid #ccc;
+  color: #333;
+  font-size: 16px;
+  /* Add more styles as needed */
+}
+
+.spinner-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+}
+
+.spinner {
+  color: #007bff; /* You can customize the color */
+}
+
+
+
+/* Your component styles */
+.center-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 0.5vh; /* Optional: Adjust the height based on your design */
+}
+
+.progress-container {
+  position: relative;
+}
+
+.percentage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.2em;
+  color: #000;
+}
+
+
+.custom-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.custom-table th, .custom-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.custom-table th {
+  background-color: #f2f2f2;
+}
+
+.ui-grid-row {
+  position: relative;
+  z-index: 1;
+}
+
+.ui-grid-col-2,
+.ui-grid-col-6,
+.ui-grid-col-4 {
+  position: relative;
+  z-index: 2; /* ou une valeur supérieure si nécessaire */
+}
+
+hr {
+  box-sizing: content-box;
+  overflow: visible;
+  background: transparent;
+  height: 1px;
+  padding: 0;
+  margin: 1em 0;
+  background-color:blue;
+  border: 0 none;
+}
+
+/* my-dialog.component.css */
+
+.custom-dialog-header {
+  background-color: #3498db; /* Set your desired background color */
+  color: #ffffff; /* Set your desired text color */
+  font-size: 20px;
+  padding: 16px;
+  border-radius: 8px 8px 0 0; /* Optional: Add rounded corners to the top */
+}
+
+
+/* Ensure the container spans the full width of the page */
+.progress-bar-container {
+  width: 100%;
+  margin: 0;  /* Remove any default margin */
+  padding: 0; /* Remove any default padding */
+}
+
+/* Add any custom styles here */
+.custom-progress-bar .p-progressbar-value {
+  background-color: #4caf50 !important; /* Change the color of the progress bar */
+}
+
+.custom-progress-bar .p-progressbar-label {
+  color: #fff !important; /* Change the color of the label */
+  font-weight: bold;
+  font-size: 14px;
+}

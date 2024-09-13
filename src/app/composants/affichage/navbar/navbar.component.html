@@ -1,0 +1,13 @@
+<p-toast>
+</p-toast>
+<p-menubar [model]="this.loginService.items">
+    <div>
+        @if ( this.loginService.visibleNav ) {
+            <button type="button" pButton label="Logout" icon="pi pi-power-off" style="margin-left:.25em"  (click)="close()"></button>
+        } @else  {
+            <button type="button" pButton label="Login" icon="pi pi-fw pi-lock-open" style="margin-left:.25em" class="p-button-success"  (click)="openDialog()"></button>
+        }
+    </div>
+</p-menubar>
+
+

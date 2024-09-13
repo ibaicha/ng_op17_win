@@ -1,0 +1,162 @@
+<p-toast> </p-toast>
+
+<div id="mapElement" #mapElement></div>
+
+<div class="card">
+  <p-toolbar styleClass="p-mb-4">
+    <ng-template pTemplate="left">
+      <button
+        pButton
+        pRipple
+        label="Ajout"
+        icon="pi pi-plus"
+        class="p-button-success p-mr-2"
+        (click)="openNew()"
+        [disabled]="disableAdd"
+      ></button>
+      <!--<button pButton pRipple [label]="Delete" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedPointServices()" [disabled]="!selectedPointServices || !selectedPointServices.length"></button>-->
+    </ng-template>
+    <ng-template pTemplate="right">
+      <button
+        pButton
+        pRipple
+        label="Export"
+        icon="pi pi-upload"
+        class="p-button-help"
+        (click)="getValue($event)"
+      ></button>
+    </ng-template>
+  </p-toolbar>
+
+  <p-table
+    #myTabClients
+    [columns]="cols"
+    [value]="this.opWithFilters"
+    dataKey="id"
+    sortMode="single"
+    rowExpandMode="single"
+    [rows]="5"
+    [paginator]="true"
+    [rowHover]="true"
+    [showCurrentPageReport]="true"
+    [rowsPerPageOptions]="[5, 10, 25, 50]"
+    [scrollable]="true"
+    scrollHeight="400px"
+    (onRowExpand)="this.onRowExpandRetourne($event)"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+  >
+    <ng-template pTemplate="caption">
+      <!--
+                    <div class="p-d-flex p-ai-center p-jc-between">
+                        <h5 class="p-m-0">Management des ops</h5>
+                    </div>
+                -->
+      <div class="flex">
+        <button
+          pButton
+          label="Clear"
+          class="p-button-outlined"
+          icon="pi pi-filter-slash"
+          (click)="clear(myTabClients)"
+        ></button>
+        <span class="p-input-icon-left ml-auto">
+          <i class="pi pi-search"></i>
+          <input
+            pInputText
+            type="text"
+            (input)="
+              myTabClients.filterGlobal($any($event.target).value, 'contains')
+            "
+            placeholder="Search keyword"
+          />
+        </span>
+      </div>
+    </ng-template>
+    <br />
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+        <th style="width: 3rem">
+          <i class="pi pi-eye-slash"></i>
+        </th>
+        <th *ngFor="let col of columns" [pSortableColumn]="col.field">
+          <p-columnFilter
+            *ngIf="col.filter == true"
+            type="text"
+            [field]="col.field"
+            display="menu"
+            class="ml-auto"
+          ></p-columnFilter>
+          {{ col.header }}
+          <p-sortIcon *ngIf="col.sort == true" [field]="col.field"></p-sortIcon>
+        </th>
+        <th colspan="2">ACTIONS</th>
+      </tr>
+    </ng-template>
+
+    <ng-template
+      pTemplate="body"
+      let-rowData
+      let-columns="columns"
+      let-expanded="expanded"
+    >
+      <tr>
+        <td>
+          <button
+            type="button"
+            pButton
+            pRipple
+            [pRowToggler]="rowData"
+            class="p-button-text p-button-rounded p-button-plain"
+            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+          ></button>
+        </td>
+
+        <td *ngFor="let col of columns" [ngSwitch]="true">
+          <span *ngSwitchDefault>{{ rowData[col.field] }}</span>
+        </td>
+
+        <td>
+          <button
+            pButton
+            pRipple
+            icon="pi pi-eye "
+            class="p-button-rounded p-button-info p-mr-2"
+            (click)="editClient(rowData)"
+          ></button>
+        </td>
+        <td>
+          <button
+            pButton
+            pRipple
+            icon="pi pi-chevron-down "
+            class="p-button-rounded p-button-info p-mr-2"
+            (click)="showDetailClient(rowData)"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="summary">
+      <div class="p-d-flex p-ai-center p-jc-between">
+        Au total :
+        {{
+          myTabClients.filteredValue ? myTabClients.filteredValue.length : 0
+        }}
+        client(s).
+      </div>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-dialog
+  [(visible)]="clientDialog"
+  [contentStyle]="{ overflow: 'visible' }"
+  [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
+  [style]="{ width: '35vw' }"
+  header="{{ titleHeader }}"
+  [modal]="true"
+  styleClass="p-fluid"
+>
+</p-dialog>
+
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>

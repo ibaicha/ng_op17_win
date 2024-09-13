@@ -1,0 +1,216 @@
+<p-toast [style]="{ marginTop: '80px' }"></p-toast>
+<br />
+<div class="card">
+  <p-accordion class="w-full">
+    <p-accordionTab>
+      <ng-template pTemplate="header">
+        <div class="flex align-items-center">
+          <b
+            class="vertical-align-middle"
+            style="font-size: 1.2rem; color: blue"
+          >
+            TABLEAU DE BORD DES MOUVEMENTS DES INTRANTS | PREPOSER UN FILTRAGE
+          </b>
+        </div>
+      </ng-template>
+
+      <ng-template pTemplate="content">
+        <p-toolbar styleClass="mb-4 gap-2">
+          <ng-template pTemplate="left">
+            @if(loginService.UserConnexion.user.role.name === 'Agence'){
+            <button
+              pButton
+              pRipple
+              label="New"
+              icon="pi pi-external-link"
+              class="p-button-success mr-2"
+            ></button>
+            }
+
+            <button
+              pButton
+              pRipple
+              label="Export"
+              icon="pi pi-upload"
+              class="p-button-help"
+            ></button>
+          </ng-template>
+
+          <ng-template pTemplate="center">
+            <label style="font-size: 1.2rem; margin-right: 10px">N° LOTS</label>
+            <div class="card flex justify-content">
+              <p-multiSelect
+                [options]="lots"
+                [(ngModel)]="selectedLots"
+                [filter]="true"
+                [style]="{ width: '150px' }"
+                optionLabel="name"
+                placeholder="CHOISIR: LOTS"
+                (onChange)="onMultiLotsChange($event)"
+              />
+            </div>
+          </ng-template>
+
+          <ng-template pTemplate="right">
+            <label style="font-size: 1.2rem; margin-right: 10px"
+              >CAMPAGNE AGRICOLE</label
+            >
+       
+
+            <div class="card flex justify-content">
+              <p-multiSelect
+                [options]="annees"
+                [(ngModel)]="selectedAnnees"
+                [filter]="true"
+                [style]="{ width: '150px' }"
+                optionLabel="name"
+                placeholder="CHOISIR: ANNEE"
+                (onChange)="onMultiAnneesChange($event)"
+              />
+            </div>
+
+            <div class="card flex justify-content">
+              <p-multiSelect
+                [options]="saisons"
+                [(ngModel)]="selectedSaisons"
+                [filter]="false"
+                [style]="{ width: '150px' }"
+                optionLabel="name"
+                placeholder="CHOISIR: SAISON"
+                (onChange)="onMultiSaisonsChange($event)"
+              />
+            </div>
+          </ng-template>
+        </p-toolbar>
+      </ng-template>
+    </p-accordionTab>
+  </p-accordion>
+  <br />
+  <p-table
+    #myTabClients
+    [columns]="colsMouvementIntrantWithFilters"
+    [value]="mouvementIntrantWithFilters"
+    [tableStyle]="{ 'min-width': '50rem' }"
+    styleClass="p-datatable-sm"
+    [loading]="loading"
+    dataKey="id"
+    sortMode="single"
+    rowExpandMode="single"
+    [rows]="5"
+    [paginator]="true"
+    [rowHover]="true"
+    [showCurrentPageReport]="true"
+    [rowsPerPageOptions]="[5, 10, 25, 50]"
+    [scrollable]="true"
+    scrollHeight="600px"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+  >
+    <!--
+    <ng-template pTemplate="caption">
+      <div class="flex">
+        <p-button
+          label="Clear"
+          class="p-button-outlined"
+          icon="pi pi-filter-slash"
+        ></p-button>
+        <span class="p-input-icon-left ml-auto">
+          <i class="pi pi-search"></i>
+          <input
+            pInputText
+            type="text"
+            (input)="
+              myTabClients.filterGlobal($any($event.target).value, 'contains')
+            "
+            placeholder="Search"
+          />
+        </span>
+      </div>
+    </ng-template>
+  -->
+
+    <br />
+
+    <br />
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+        <th style="width: 3rem; background-color: aqua">
+          <i class="pi pi-eye-slash"></i>
+        </th>
+        @for (col of columns; track $index) {
+        <th [pSortableColumn]="col.field" style="background-color: aqua">
+          @if (col.filter) {
+          <p-columnFilter
+            type="text"
+            [field]="col.field"
+            display="menu"
+            class="ml-auto"
+          ></p-columnFilter>
+          }
+          {{ col.header }}
+          @if (col.sort) {
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+          }
+        </th>
+        } @empty { Empty list of credits }
+        <th
+          colspan="2"
+          style="
+            text-align: center;
+            vertical-align: middle;
+            background-color: aqua;
+          "
+        >
+          ACTIONS
+        </th>
+        <!--
+                  <th colspan="2" style="text-align: center; vertical-align: middle; background-color: aqua;">VIEWS</th>
+                  -->
+      </tr></ng-template
+    >
+
+    <ng-template
+      pTemplate="body"
+      let-rowData
+      let-columns="columns"
+      let-expanded="expanded"
+    >
+      <tr>
+        <td>
+          <p-button
+            pRipple
+            [pRowToggler]="rowData"
+            class="p-button-text p-button-rounded p-button-plain"
+            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+          ></p-button>
+        </td>
+        @for (col of columns; track $index) { @switch (true) { @default { @if (
+        col.field == 'quantiteEntreeEmballage' || col.field ==
+        'quantiteSortieEmballage' || col.field ==
+        'quantiteEntreeSortieEmballage') {
+        <td>
+          <span>{{ this.formatNumber(rowData[col.field]) }}</span>
+        </td>
+        } @else {
+        <td>
+          <span>{{ rowData[col.field] }}</span>
+        </td>
+        } } } }
+
+        <td>
+          <p-button
+            pRipple
+            icon="pi pi-eye "
+            class="p-button-rounded p-button-info p-mr-2"
+          ></p-button>
+        </td>
+        <td>
+          <p-button
+            pRipple
+            icon="pi pi-delete-left"
+            class="p-button-rounded p-button-danger p-mr-2"
+          ></p-button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

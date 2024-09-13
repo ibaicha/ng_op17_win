@@ -1,0 +1,334 @@
+<p-toast [style]="{ marginTop: '80px' }"></p-toast>
+<hr
+  style="
+    height: 3px;
+    background: teal;
+    margin: 15px 0;
+    box-shadow: 0px 0px 4px 2px rgba(204, 204, 204, 1);
+  "
+/>
+<div class="card">
+  <p-accordion class="w-full" >
+    <p-accordionTab  [ngStyle] ="{'background-color: #f5f5f5; width':'50%'}">
+      <ng-template pTemplate="header">
+        <div class="flex align-items-center">
+          <label
+            style="
+              font-size: 1.4rem;
+              color: blue;
+              font-weight: bold;
+              margin-right: 10px;
+            "
+          >
+            TABLEAU DE BORD DES MOUVEMENTS DES INTRANTS | PREPOSER UN FILTRAGE
+          </label>
+
+          <label
+            style="
+              font-size: 1.4rem;
+              margin-right: 10px;
+              color: red;
+              font-weight: bold;
+              margin-left: 30px;
+            "
+          >
+            Nombre: {{ filteredPoints.length }} Point(s) dépôt
+          </label>
+        </div>
+      </ng-template>
+
+      <ng-template pTemplate="content">
+        <p-toolbar styleClass="mb-4 gap-2">
+          <ng-template pTemplate="left">
+            @if(loginService.UserConnexion.user.role.name === 'Agence'){
+            <button
+              pButton
+              pRipple
+              label="New"
+              icon="pi pi-external-link"
+              class="p-button-success mr-2"
+            ></button>
+            }
+
+            <button
+              pButton
+              pRipple
+              label="Export"
+              icon="pi pi-upload"
+              class="p-button-help"
+            ></button>
+          </ng-template>
+          <ng-template pTemplate="center">
+            <div class="card flex justify-content ; margin-right: 10px">
+              <p-multiSelect
+                [options]="selectItemGroupChargeExploitations"
+                [group]="true"
+                [(ngModel)]="selectedChargeExploitations"
+                [filter]="true"
+                scrollHeight="250px"
+                [style]="{ width: '250px' }"
+                placeholder="CHOISIR: INTRANT"
+                (onChange)="onMultiChargeExploitationsChange($event)"
+              >
+                <ng-template let-group pTemplate="group">
+                  <div class="flex align-items-center">
+                    <span>{{ group.label }}</span>
+                  </div>
+                </ng-template>
+              </p-multiSelect>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="right">
+            <label style="font-size: 1.4rem; margin-right: 10px; color: blue"
+              >CAMPAGNE AGRICOLE
+            </label>
+            <div class="card flex justify-content ; margin-right: 10px">
+              <p-multiSelect
+                [options]="annees"
+                [(ngModel)]="selectedAnnees"
+                [filter]="true"
+                [style]="{ width: '150px' }"
+                optionLabel="name"
+                placeholder="CHOISIR: ANNEE"
+                (onChange)="onMultiAnneesChange($event)"
+              />
+            </div>
+            <label
+              style="
+                font-size: 1.4rem;
+                margin-right: 10px;
+                margin-left: 10px;
+                color: blue;
+              "
+              >|
+            </label>
+            <div class="card flex justify-content">
+              <p-multiSelect
+                [options]="saisons"
+                [(ngModel)]="selectedSaisons"
+                [filter]="false"
+                [style]="{ width: '150px' }"
+                optionLabel="name"
+                placeholder="CHOISIR: SAISON"
+                (onChange)="onMultiSaisonsChange($event)"
+              />
+            </div>
+          </ng-template>
+        </p-toolbar>
+        <hr />
+        <p-toolbar>
+          <ng-template pTemplate="left">
+            <label style="font-size: 1.4rem; margin-right: 10px; color: blue">
+            </label>
+          </ng-template>
+
+          <ng-template pTemplate="right">
+            <label style="font-size: 1.4rem; margin-right: 10px; color: blue"
+              >FILTRAGE DEPOTS
+            </label>
+            <span class="p-input-icon-right ml-auto; margin-right: 20px">
+              <i class="pi pi-search"></i>
+              <input
+                type="text"
+                pInputText
+                placeholder="Search"
+                [(ngModel)]="filterTextPoint"
+                (input)="applyFilter()"
+              />
+            </span>
+            <label
+              style="
+                font-size: 1.4rem;
+                margin-right: 10px;
+                margin-left: 10px;
+                color: blue;
+              "
+              >|
+            </label>
+            <div class="card flex justify-content">
+              <p-multiSelect
+                [options]="points"
+                [(ngModel)]="selectedPoints"
+                [filter]="true"
+                [style]="{ width: '150px' }"
+                optionLabel="name"
+                placeholder="CHOISIR: POINT DEPOT"
+                (onChange)="onMultiPointsChange($event)"
+              />
+            </div>
+          </ng-template>
+        </p-toolbar>
+      </ng-template>
+    </p-accordionTab>
+  </p-accordion>
+
+  <hr
+    style="
+      height: 3px;
+      background: teal;
+      margin: 15px 0;
+      box-shadow: 0px 0px 4px 2px rgba(204, 204, 204, 1);
+    "
+  />
+  @defer (when loading) {
+  <div class="card flex justify-content-center">
+    <p-accordion class="w-full">
+      @for (itemPoint of filteredPoints; track $index) {
+      <p-accordionTab>
+        <ng-template pTemplate="header">
+          <div class="flex align-items-left">
+            <i
+              class="pi pi-folder-open mr-2"
+              style="font-size: 2rem; color: orange"
+            ></i>
+            <span
+              class="vertical-align-middle"
+              style="font-size: 1.3rem; color: blue; margin-right: 10px"
+              >{{ itemPoint.id }} - {{ itemPoint.name }}
+            </span>
+          </div>
+          <div class="flex align-items-right">
+            <span
+              class="vertical-align-right"
+              style="font-size: 1.3rem; color: red"
+            >
+              {{ retourCreditGroupsPoints(itemPoint.id).length }} ligne(s)
+              trouvée(s)
+            </span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="content">
+          <div id="mapElement" #mapElement></div>
+
+          @if (retourCreditGroupsPoints(itemPoint.id).length > 0){
+          <div class="card">
+            <p-table
+              #myTabClients
+              [columns]="colsMouvementIntrantWithFilters"
+              [value]="retourCreditGroupsPoints(itemPoint.id)"
+              [tableStyle]="{ 'min-width': '50rem' }"
+              styleClass="p-datatable-sm"
+              [loading]="loading"
+              dataKey="id"
+              sortMode="single"
+              rowExpandMode="single"
+              [rows]="5"
+              [paginator]="true"
+              [rowHover]="true"
+              [showCurrentPageReport]="true"
+              [rowsPerPageOptions]="[5, 10, 25, 50]"
+              [scrollable]="true"
+              scrollHeight="600px"
+              currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+            >
+              <br />
+
+              <br />
+              <ng-template pTemplate="header" let-columns>
+                <tr>
+                  <th style="width: 3rem; background-color: aqua">
+                    <i class="pi pi-eye-slash"></i>
+                  </th>
+                  @for (col of columns; track $index) {
+                  <th
+                    [pSortableColumn]="col.field"
+                    style="background-color: aqua"
+                  >
+                    @if (col.filter) {
+                    <p-columnFilter
+                      type="text"
+                      [field]="col.field"
+                      display="menu"
+                      class="ml-auto"
+                    ></p-columnFilter>
+                    }
+                    {{ col.header }}
+                    @if (col.sort) {
+                    <p-sortIcon [field]="col.field"></p-sortIcon>
+                    }
+                  </th>
+                  } @empty { Empty list of credits }
+                  <th
+                    colspan="2"
+                    style="
+                      text-align: center;
+                      vertical-align: middle;
+                      background-color: aqua;
+                    "
+                  >
+                    ACTIONS
+                  </th>
+                </tr></ng-template
+              >
+
+              <ng-template
+                pTemplate="body"
+                let-rowData
+                let-columns="columns"
+                let-expanded="expanded"
+              >
+                <tr>
+                  <td>
+                    <p-button
+                      pRipple
+                      [pRowToggler]="rowData"
+                      class="p-button-text p-button-rounded p-button-plain"
+                      [icon]="
+                        expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'
+                      "
+                    ></p-button>
+                  </td>
+                  @for (col of columns; track $index) { @switch (true) {
+                  @default { @if ( col.field == 'quantiteEntreeEmballage' ||
+                  col.field == 'quantiteSortieEmballage' || col.field ==
+                  'quantiteEntreeSortieEmballage') {
+                  <td>
+                    <span>{{ this.formatNumber(rowData[col.field]) }}</span>
+                  </td>
+                  } @else {
+                  <td>
+                    <span>{{ rowData[col.field] }}</span>
+                  </td>
+                  } } } }
+
+                  <td>
+                    <p-button
+                      pRipple
+                      icon="pi pi-eye "
+                      class="p-button-rounded p-button-info p-mr-2"
+                    ></p-button>
+                  </td>
+                  <td>
+                    <p-button
+                      pRipple
+                      icon="pi pi-delete-left"
+                      class="p-button-rounded p-button-danger p-mr-2"
+                    ></p-button>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+          } @else { LISTE DES MOUVEMENT DES INTRANTS VIDE POUR
+          {{ itemPoint.name }}
+
+          }
+        </ng-template>
+      </p-accordionTab>
+      } @empty { LA LISTE DES POINTS DE COLLECTE EST VIDE }
+    </p-accordion>
+  </div>
+
+  } @placeholder {
+  <span>Chargement...</span>
+  } @error {
+  <span>Error</span>
+  } @loading (minimum 1s) {
+  <div class="card">
+    <p-progressBar
+      mode="indeterminate"
+      [style]="{ height: '6px' }"
+    ></p-progressBar>
+  </div>
+  }
+</div>

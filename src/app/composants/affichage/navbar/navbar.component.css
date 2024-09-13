@@ -1,0 +1,24 @@
+.ui-menubar {
+    background-color: #3498db;
+  }
+  
+  .ui-menuitem-text {
+    color: #ffffff;
+  }
+  
+  .ui-menuitem:hover {
+    background-color: #2980b9;
+  }
+  
+  .ui-menuitem-text {
+    font-size: 16px;
+  }
+  
+  .ui-menuitem {
+    margin: 5px 10px;
+  }
+  
+  .ui-menuitem {
+    border: 1px solid #3498db;
+  }
+  

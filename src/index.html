@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Ges'OPs</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito:400,700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="/assets/fontawesome/css/all.min.css" />
+
+    <link rel="stylesheet" href="/assets/css/style.css" />
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    />
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgG5rT7H_vALABMgLHgQam3lpzYa1qLqs"
+      async
+      defer
+    ></script>
+
+    <script>
+      jQuery(document).ready(function () {
+        var btn = $("#button");
+
+        $(window).scroll(function () {
+          if ($(window).scrollTop() > 300) {
+            btn.addClass("show");
+          } else {
+            btn.removeClass("show");
+          }
+        });
+
+        btn.on("click", function (e) {
+          e.preventDefault();
+          $("html, body").animate(
+            {
+              scrollTop: 0,
+            },
+            "300"
+          );
+        });
+      });
+    </script>
+  </head>
+
+  <body>
+    <div id="container">
+      <hr class="hrsizewhite" />
+
+      <a id="button"></a>
+
+      <app-root>Attendre la fin du chargement...</app-root>
+    </div>
+  </body>
+</html>
