@@ -5,6 +5,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 // import { Headers, RequestOptions } from '@angular/http';
 // import { Body } from '@angular/http/src/body';
 
+import * as serviceURL_Data from '../../assets/env.json';
+
 @Injectable()
 export class AppService {
   // private serviceURL = 'https://api-horticulture.suivi-paddy.org/';
@@ -12,9 +14,12 @@ export class AppService {
   // private serviceURL = 'http://192.168.43.97:80OO/';
   // private serviceURL = 'http://localhost:8000/';
   // private serviceURL = 'http://172.20.10.3:3000';
-  // private serviceURL = 'http://192.168.1.26:3000';
-  private serviceURL = 'https://test-p94w.onrender.com';
+  // private serviceURL = 'https://test-p94w.onrender.com';
   // private serviceURL = 'http://172.16.1.127:3000';
+
+  private serviceURL = '';
+
+
 
   public body = {};
   public myHeader = new HttpHeaders().set(
@@ -30,8 +35,14 @@ private headers: Headers = new Headers(
 );
 */
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    const data: any = serviceURL_Data;
+    console.log('Data', data.data[0]['serviceURL']);
+    this.serviceURL = data.data[0]['serviceURL'];
+  }
+
   getUrl(url: string): string {
+
     return this.serviceURL + url;
   }
 
