@@ -4,12 +4,9 @@
 @import "primeng/resources/primeng.css";
 @import 'primeicons/primeicons.css';
 
-
-
-
- 
-
-
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 
 body {
@@ -24,8 +21,6 @@ body {
     margin: 0 auto;
     max-width: 95%;
 }
-
-
 
 .btn-wrapper {
   /* flexbox */
