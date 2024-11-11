@@ -38,7 +38,7 @@ private headers: Headers = new Headers(
   constructor(private http: HttpClient) {
     const data: any = serviceURL_Data;
     console.log('Data', data.data[0]['serviceURL']);
-    this.serviceURL = data.data[0]['serviceURL'];
+    this.serviceURL = data.data[0]['serviceURLDev'];
   }
 
   getUrl(url: string): string {
